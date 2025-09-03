@@ -4,6 +4,7 @@ import numpy as np
 import torch
 import uproot
 from torch.utils.data import TensorDataset, random_split
+import matplotlib.pyplot as plt
 
 def scan_elements(root_files):
     """
@@ -95,3 +96,49 @@ def load_dataset(root_dir, use_noise=True, val_ratio=0.2):
     train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
 
     return train_dataset, val_dataset, element_list, element_to_index
+
+
+def plot_carbon_fraction_histogram(train_dataset, element_to_index, bin_range='0-10'):
+    """
+    Plot histogram of carbon fractions in dataset.
+
+    Parameters
+    ----------
+    train_dataset : torch.utils.data.TensorDataset
+        Dataset containing (X, Y), where Y is of shape [N, D].
+    element_to_index : dict
+        Mapping from element name (e.g., 'C') to index.
+    bin_range : str
+        Either '0-10' for 0–10% range, or '0-100' for 0–100% full range.
+    """
+    # Extract Y from dataset
+    full_Y = train_dataset.dataset.tensors[1]  # Y from full dataset
+    indices = train_dataset.indices
+    Y = full_Y[indices]
+
+    os.makedirs("results", exist_ok=True)
+
+    # Get carbon index and extract carbon values
+    carbon_index = element_to_index["C"]
+    carbon_fractions = Y[:, carbon_index]
+
+    if bin_range == '0-10':
+        bins = np.linspace(0, 0.1, 11)
+    elif bin_range == '0-100':
+        bins = np.linspace(0, 1.0, 11)
+    else:
+        raise ValueError(" bin_range must be '0-10' or '0-100' ")
+    
+    bin_labels = [f"{int(b*100)}–{int(bins[i+1]*100)}%" for i, b in enumerate(bins[:-1])]
+    bin_centers = 0.5 * (bins[:-1] + bins[1:]) 
+
+    # Plot
+    plt.figure(figsize=(8, 5))
+    plt.hist(carbon_fractions, bins=bins, edgecolor="black")
+    plt.xlabel("Carbon fraction")
+    plt.ylabel("Number of samples")
+    plt.title("Distribution of Carbon Fractions in Dataset")
+    plt.xticks(bin_centers, bin_labels)
+    plt.tight_layout()
+    plt.savefig("results/Distribution of carbon fraction in dataset.svg", format="svg")
+    plt.show()
