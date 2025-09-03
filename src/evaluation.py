@@ -79,7 +79,7 @@ def plot_sample_with_uncertainty(results, element_list, sample_index=0):
     sample_index : int
         Index of the sample to visualize.
     """
-    os.makedirs("results", exist_ok=True)
+    os.makedirs("../results", exist_ok=True)
 
     preds = results["preds"]
     targets = results["targets"]
@@ -96,7 +96,7 @@ def plot_sample_with_uncertainty(results, element_list, sample_index=0):
     plt.legend()
     plt.grid(True, linestyle="--", alpha=0.5)
     plt.tight_layout()
-    plt.savefig("results/sample_pred.svg", format="svg")
+    plt.savefig("../results/sample_pred.svg", format="svg")
     plt.show()
 
 
@@ -115,7 +115,7 @@ def plot_mdn_distribution(results, element_list, sample_index=0, element_name="C
     element_name : str
         Element to visualize (e.g. "C", "O", "Si").
     """
-    os.makedirs("results", exist_ok=True)
+    os.makedirs("../results", exist_ok=True)
 
     d = element_list.index(element_name)
 
@@ -139,7 +139,7 @@ def plot_mdn_distribution(results, element_list, sample_index=0, element_name="C
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    plt.savefig("results/sample_carbon_pred_distribution.svg", format="svg")
+    plt.savefig("../results/sample_carbon_pred_distribution.svg", format="svg")
     plt.show()
 
 
@@ -158,7 +158,7 @@ def plot_carbon_error_boxplot(results, element_to_index, bin_range="0-10", show_
     show_std_line : bool
         Whether to add predicted std as line plot in the same plot.
     """
-    os.makedirs("results", exist_ok=True)
+    os.makedirs("../results", exist_ok=True)
 
     carbon_index = element_to_index["C"]
     true_C = results["targets"][:, carbon_index].numpy()
@@ -191,7 +191,7 @@ def plot_carbon_error_boxplot(results, element_to_index, bin_range="0-10", show_
     plt.title("Absolute Error of Carbon Prediction")
     plt.grid(True, axis="y")
     plt.tight_layout()
-    plt.savefig("results/carbon_error_boxplot.svg", format="svg")
+    plt.savefig("../results/carbon_error_boxplot.svg", format="svg")
     plt.show()
 
 def plot_abs_error_boxplot(results, element_list):
@@ -205,7 +205,7 @@ def plot_abs_error_boxplot(results, element_list):
     element_list : list of str
         List of element names used as tick labels.
     """
-    os.makedirs("results", exist_ok=True)
+    os.makedirs("../results", exist_ok=True)
 
     preds = results["preds"]     # shape: [N, D]
     targets = results["targets"] # shape: [N, D]
@@ -220,7 +220,7 @@ def plot_abs_error_boxplot(results, element_list):
     plt.title("Boxplot of Absolute Error per Element")
     plt.grid(True, axis="y", linestyle="--", alpha=0.5)
     plt.tight_layout()
-    plt.savefig("results/abs_error_boxplot.svg", format="svg")
+    plt.savefig("../results/abs_error_boxplot.svg", format="svg")
     plt.show()
 
 
@@ -237,7 +237,7 @@ def plot_true_vs_pred_scatter(results, element_name, element_to_index):
     element_to_index : dict
         Mapping from element names to index.
     """
-    os.makedirs("results", exist_ok=True)
+    os.makedirs("../results", exist_ok=True)
 
     idx = element_to_index[element_name]
     true_vals = results["targets"][:, idx].numpy()
@@ -251,7 +251,7 @@ def plot_true_vs_pred_scatter(results, element_name, element_to_index):
     plt.title(f"True vs. Predicted: {element_name}")
     plt.grid(True, linestyle="--", alpha=0.6)
     plt.tight_layout()
-    plt.savefig(f"results/{element_name}_true_vs_pred.svg", format="svg")
+    plt.savefig(f"../results/{element_name}_true_vs_pred.svg", format="svg")
     plt.show()
 
 
@@ -270,7 +270,7 @@ def plot_residual_histogram(results, element_name, element_to_index, bins=30):
     bins : int
         Number of histogram bins.
     """
-    os.makedirs("results", exist_ok=True)
+    os.makedirs("../results", exist_ok=True)
 
     idx = element_to_index[element_name]
     true_vals = results["targets"][:, idx].numpy()
@@ -285,7 +285,7 @@ def plot_residual_histogram(results, element_name, element_to_index, bins=30):
     plt.title(f"Residual Distribution for {element_name}")
     plt.grid(True, linestyle="--", alpha=0.6)
     plt.tight_layout()
-    plt.savefig(f"results/{element_name}_residual_hist.svg", format="svg")
+    plt.savefig(f"../results/{element_name}_residual_hist.svg", format="svg")
     plt.show()
 
 
@@ -302,7 +302,7 @@ def plot_uncertainty_coverage(results, element_list, element_to_index):
     element_to_index : dict
         Mapping from element names to column indices.
     """
-    os.makedirs("results", exist_ok=True)
+    os.makedirs("../results", exist_ok=True)
 
     std_levels=[1.0, 1.68, 1.96]
     theoretical_coverage=[0.6827, 0.90, 0.95]
@@ -350,5 +350,5 @@ def plot_uncertainty_coverage(results, element_list, element_to_index):
     plt.legend(title="Element")
     plt.grid(axis="y", linestyle="--", alpha=0.5)
     plt.tight_layout()
-    plt.savefig("results/uncertainty_coverage.svg", format="svg")
+    plt.savefig("../results/uncertainty_coverage.svg", format="svg")
     plt.show()
