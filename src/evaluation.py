@@ -3,6 +3,7 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 import utils
+import losses
 
 
 def run_evaluation(model, val_loader, device, mdn_predict_mean, mdn_predict_std):
@@ -62,6 +63,25 @@ def run_evaluation(model, val_loader, device, mdn_predict_mean, mdn_predict_std)
         "mu": torch.cat(all_mu, dim=0),
         "sigma": torch.cat(all_sigma, dim=0),
     }
+
+
+def metrics(results):
+    """
+    Compute MAE and NLL from evaluation results.
+
+    Parameters
+    ----------
+    results : dict
+        Output from run_evaluation().
+
+    Returns
+    -------
+    dict
+        Dictionary with keys 'MAE' and 'NLL' (float).
+    """
+    mae = utils.compute_mae(results["preds"], results["targets"]).item()
+    nll = losses.mdn_loss(results["targets"], results["pi"], results["mu"], results["sigma"]).item()
+    return {"MAE": mae, "NLL": nll}
 
 
 # Plot
@@ -143,7 +163,7 @@ def plot_mdn_distribution(results, element_list, sample_index=0, element_name="C
     plt.show()
 
 
-def plot_carbon_error_boxplot(results, element_to_index, bin_range="0-10", show_std_line=False,):
+def plot_carbon_error_boxplot(results, element_to_index, bin_range="0-10"):
     """
     Generate a boxplot of absolute error grouped by carbon fraction bins.
 
@@ -155,8 +175,6 @@ def plot_carbon_error_boxplot(results, element_to_index, bin_range="0-10", show_
         Mapping from element name to index. Must include 'C'.
     bin_range : str
         Either '0-10' for 0–10% range, or '0-100' for 0–100% full range.
-    show_std_line : bool
-        Whether to add predicted std as line plot in the same plot.
     """
     os.makedirs("../results", exist_ok=True)
 
